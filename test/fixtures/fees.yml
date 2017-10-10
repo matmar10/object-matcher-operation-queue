@@ -1,0 +1,50 @@
+---
+
+# deposit MYR (various ExternalAccount to fat Account)
+- criteria:
+    sourceExternalAccountType: debit card
+    # sourceExternalAccountType:
+    #   $in:
+    #     - debit card
+    #     - atm deposit
+    #     - counter deposit
+    #     - back account
+    destinationAccountType: fiat
+    destinationCurrency: MYR
+  operations:
+    - name: apply fee
+      options:
+        type:     fixed
+        value:    1000000 # 1.00 MYR
+        on:       source
+    - name: apply fee
+      options:
+        type:     percent
+        value:    20
+        on:       source
+
+# withdraw MYR at branch
+- criteria:
+    sourceAccountType:                    fiat
+    destinationCurrency:                  MYR
+    destinationExternalAccountType:       counter withdrawal
+    destinationExternalAccountCurrency:   MYR
+  operation:
+    name: apply fee
+    options:
+      type:     fixed
+      value:    1000000 # 1.00 MYR
+      on:       source
+
+# withdraw MYR to bank account
+- criteria:
+    sourceAccountType:                    fiat
+    destinationCurrency:                  MYR
+    destinationExternalAccountType:       counter withdrawal
+    destinationExternalAccountCurrency:   MYR
+  operation:
+    name: apply fee
+    options:
+      type:     fixed
+      value:    1500000 # 1.50 MYR
+      on:       source
