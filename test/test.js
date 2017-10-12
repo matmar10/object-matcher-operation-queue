@@ -1,7 +1,6 @@
 'use strict';
 
 const Promise = require('bluebird');
-const transactions = require('./fixtures/transactions');
 const errors = require('common-errors');
 
 const chai = require('chai');
@@ -11,19 +10,19 @@ const chai = require('chai');
 describe('ObjectOperationMatcher', function () {
 
   it('is an object', function () {
-    const ObjectOperationMatcher = require('./../');
+    const ObjectOperationMatcher = require('./../src');
     chai.expect(ObjectOperationMatcher).to.be.an('function');
   });
 
   it('requires a path to configuration', function () {
-    const ObjectOperationMatcher = require('./../');
+    const ObjectOperationMatcher = require('./../src');
     chai.expect(() => {
       new ObjectOperationMatcher();
     }).to.throw(Error);
   });
 
   it('throws error for invalid hash of methods', function () {
-    const ObjectOperationMatcher = require('./../');
+    const ObjectOperationMatcher = require('./../src');
     chai.expect(() => {
       new ObjectOperationMatcher(__dirname + '/fixtures/fees.yml', {
         'foo': 'bar'
@@ -32,7 +31,7 @@ describe('ObjectOperationMatcher', function () {
   });
 
   it('accepts a hash of methods', function () {
-    const ObjectOperationMatcher = require('./../');
+    const ObjectOperationMatcher = require('./../src');
     new ObjectOperationMatcher(__dirname + '/fixtures/fees.yml', {
       'foo': function () {}
     });
@@ -40,7 +39,7 @@ describe('ObjectOperationMatcher', function () {
 
   describe('assertValidCriteria', function () {
     it('rejects criteria not matching schema', function () {
-      const ObjectOperationMatcher = require('./../');
+      const ObjectOperationMatcher = require('./../src');
       try {
         ObjectOperationMatcher.assertValidCriteria({
           foo: 'bar'
@@ -50,7 +49,7 @@ describe('ObjectOperationMatcher', function () {
       }
     });
     it('accepts criteria matching schema', function () {
-      const ObjectOperationMatcher = require('./../');
+      const ObjectOperationMatcher = require('./../src');
       try {
         ObjectOperationMatcher.assertValidCriteria({
           criteria: {
@@ -66,28 +65,28 @@ describe('ObjectOperationMatcher', function () {
 
   describe('operation()', function () {
     it('rejects invalid callback', function () {
-      const ObjectOperationMatcher = require('./../');
+      const ObjectOperationMatcher = require('./../src');
       const o = new ObjectOperationMatcher(__dirname + '/fixtures/fees.yml');
       chai.expect(() => {
         o.operation('foo', 'bar');
       }).to.throw(Error);
     });
     it('accepts valid callback', function () {
-      const ObjectOperationMatcher = require('./../');
+      const ObjectOperationMatcher = require('./../src');
       const o = new ObjectOperationMatcher(__dirname + '/fixtures/fees.yml');
       chai.expect(() => {
         o.operation('foo', function () {});
       }).to.not.throw(Error);
     });
     it('throws OperationNotSupported for unregistered operation name', function () {
-      const ObjectOperationMatcher = require('./../');
+      const ObjectOperationMatcher = require('./../src');
       const o = new ObjectOperationMatcher(__dirname + '/fixtures/fees.yml');
       chai.expect(() => {
         o.operation('foo');
       }).to.throw(errors.OperationNotSupported);
     });
     it('returns callback for registered operation name', function () {
-      const ObjectOperationMatcher = require('./../');
+      const ObjectOperationMatcher = require('./../src');
       const o = new ObjectOperationMatcher(__dirname + '/fixtures/fees.yml');
       const fn = function () {};
       o.operation('foo', fn);
@@ -100,7 +99,7 @@ describe('ObjectOperationMatcher', function () {
 
   describe('ready()', function () {
     it('returns rejected promise for invalid path', function (done) {
-      const ObjectOperationMatcher = require('./../');
+      const ObjectOperationMatcher = require('./../src');
       const o = new ObjectOperationMatcher('not-real-file.yml');
       const ready = o.ready();
       chai.expect(ready).to.be.an.instanceOf(Promise);
@@ -110,7 +109,7 @@ describe('ObjectOperationMatcher', function () {
       });
     });
     it('returns resolved promise for vaid path', function (done) {
-      const ObjectOperationMatcher = require('./../');
+      const ObjectOperationMatcher = require('./../src');
       const o = new ObjectOperationMatcher(__dirname + '/fixtures/fees.yml');
       const ready = o.ready();
       chai.expect(ready).to.be.an.instanceOf(Promise);
@@ -122,7 +121,7 @@ describe('ObjectOperationMatcher', function () {
 
   describe('match()', function () {
     it('returns empty array for no matches', function (done) {
-      const ObjectOperationMatcher = require('./../');
+      const ObjectOperationMatcher = require('./../src');
       const o = new ObjectOperationMatcher(__dirname + '/fixtures/simple.yml', {
         'say hello': () => {},
         'say goodbye': () => {}
@@ -141,7 +140,7 @@ describe('ObjectOperationMatcher', function () {
         }, done);
     });
     it('returns array of callbacks for matches', function (done) {
-      const ObjectOperationMatcher = require('./../');
+      const ObjectOperationMatcher = require('./../src');
       const sayHello = () => {};
       const sayGoodbye = () => {};
       const sayNiceThing = () => {};
@@ -175,7 +174,7 @@ describe('ObjectOperationMatcher', function () {
 
   describe('execute()', function () {
     it('executes all operations in order for matched criteria', function (done) {
-      const ObjectOperationMatcher = require('./../');
+      const ObjectOperationMatcher = require('./../src');
 
       const said = [];
 

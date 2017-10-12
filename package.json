@@ -1,13 +1,13 @@
 {
-  "name": "transaction-operation-matcher",
+  "name": "object-matcher-operation-queue",
   "version": "0.1.0",
-  "description": "Match transaction objects and build a list of operations that should be performed.",
-  "main": "index.js",
+  "description": "Match an object to a list of operations based on a YAML configuration, and then execute them in sequential order, passing the result to each subsequent operation.",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/mocha/bin/mocha test/"
   },
   "author": "Matthew J. Martin <matthew.mar10@gmail.com>",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "dependencies": {
     "ajv": "^5.2.3",
     "bluebird": "^3.5.1",

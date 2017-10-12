@@ -1,13 +1,15 @@
-# transaction-operation-matcher
+# object-matcher-operation-queue
 
-Match and execute operations based on a list of possible matching criteria
+Match an object to a list of operations based on a YAML configuration, and then execute them in sequential order, passing the result to each subsequent operation.
 
 Based on [object-matcher](https://github.com/simonfan/object-matcher).
+
+**See the `test/` directory for examples**  
 
 ## Installation
 
 ```
-npm install --save transaction-operation-matcher
+npm install --save object-matcher-operation-queue
 ```
 
 ## Example Usage
