@@ -4,13 +4,16 @@ const assert = require('assert');
 const errors = require('common-errors');
 const buildObjectMatcher = require('object-matcher');
 const jsYaml = require('js-yaml');
-const validateWithJsonSchema = require('jsonschema').validate;
+const Ajv = require('ajv');
+
+const ajv = new Ajv();
+const operationCriteriaSchema = require('./operation-criteria-schema');
+const validateOperationCriteriaItem = ajv.compile(operationCriteriaSchema);
 
 const fs = require('fs');
 const Promise = require('bluebird');
 const readFileAsync = Promise.promisify(fs.readFile);
 
-const operationCriteriaSchema = require('./operation-criteria-schema');
 
 class ObjectOperationMatcher {
 
@@ -21,6 +24,8 @@ class ObjectOperationMatcher {
    * @return {ObjectOperationMatcher}
    */
   constructor(pathToOperationCriteria, operations) {
+
+    assert(pathToOperationCriteria, 'Requires `pathToOperationCriteria`');
 
     this._operationCriteriaList = [];
     this._matchers = [];
@@ -33,7 +38,7 @@ class ObjectOperationMatcher {
         this._operationCriteriaList = jsYaml.safeLoad(fileContent);
         this._matchers = this._operationCriteriaList.map((operationCriteria) => {
           // TODO: schema is not working
-          // ObjectOperationMatcher.assertValidCriteria(operationCriteria);
+          ObjectOperationMatcher.assertValidCriteria(operationCriteria);
           return buildObjectMatcher(operationCriteria.criteria);
         });
       });
@@ -45,9 +50,10 @@ class ObjectOperationMatcher {
   }
 
   static assertValidCriteria(operationCriteria) {
-    validateWithJsonSchema(operationCriteria, operationCriteriaSchema, {
-      throwError: true
-    });
+    if (validateOperationCriteriaItem(operationCriteria)) {
+      return;
+    }
+    throw validateOperationCriteriaItem.errors[0];
   }
 
   /**
@@ -81,15 +87,16 @@ class ObjectOperationMatcher {
   match(transaction) {
     const matchingOperations = [];
     this._matchers.forEach((isMatchForOperation, i) => {
-
       if (!isMatchForOperation(transaction)) {
         return;
       }
 
       const operationAndCriteria = this._operationCriteriaList[i];
 
-      const buildCallback = (options, fn) => {
-        return fn.bind(fn, options);
+      const buildCallback = (name, options, fn) => {
+        const cb = fn.bind(fn, options);
+        cb.operationName = name;
+        return cb;
       };
 
       // assign the callback functions with the parameters required
@@ -104,13 +111,13 @@ class ObjectOperationMatcher {
         }
 
         if ('string' === typeof operation) {
-          const fn = buildCallback({}, this.operation(operation));
+          const fn = buildCallback(operation, {}, this.operation(operation));
           matchingOperations.push(fn);
           return;
         }
 
         if ('object' === typeof operation) {
-          const fn = buildCallback(operation.options, this.operation(operation.name));
+          const fn = buildCallback(operation.name,  operation.options, this.operation(operation.name));
           matchingOperations.push(fn);
           return;
         }
@@ -125,12 +132,19 @@ class ObjectOperationMatcher {
 
   /**
    * Execute all matched trans
+   *
    */
-  execute(transaction) {
-    const matchedFns = this.match(transaction);
+  /**
+   * [execute description]
+   * @param  {object} obj        The object to start the processing chain on
+   * @param  {*} initialValue    (optional) The initial value to be passed to the first matched operation
+   * @return {*}                 The resulting value from all operations
+   */
+  execute(obj, initialValue) {
+    const matchedFns = this.match(obj);
     return Promise.reduce(matchedFns, (prevResult, fn) => {
-      return fn(transaction, prevResult);
-    }, null);
+      return fn(obj, prevResult);
+    }, initialValue);
   }
 
   ready() {

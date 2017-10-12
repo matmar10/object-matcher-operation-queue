@@ -1,63 +1,54 @@
 'use strict';
 
 module.exports = {
-  type: 'object',
+
   anyOf: [{
-    required: ['criteria', 'operations']
+    $ref: '#/definitions/MultiOperationCriteria'
+  }, {
+    $ref: '#/definitions/SingleOperationCriteria'
   }],
-  properties: {
-    criteria: {
-      type: 'object'
-    },
-    operation: {
-      $ref: '#/definitions/Operation'
-    },
-    operations: {
-      $ref: '#/definitions/OperationList'
-    }
-  },
+
   definitions: {
-    OperationList: {
-      type: 'array',
-      items: {
-        $ref: '#/definitions/Operation'
+
+    SingleOperationCriteria: {
+      type: 'object',
+      required: ['criteria', 'operation'],
+      properties: {
+        criteria: { $ref: '#/definitions/Criteria' },
+        operation: { $ref: '#/definitions/Operation' }
       }
     },
+
+    MultiOperationCriteria: {
+      type: 'object',
+      required: ['criteria', 'operations'],
+      properties: {
+        criteria: { $ref: '#/definitions/Criteria' },
+        operations: { $ref: '#/definitions/OperationList' }
+      }
+    },
+
+    Criteria: {
+      type: 'object',
+      properties: {}
+    },
+
     Operation: {
       type: 'object',
+      required: ['name', 'options'],
       properties: {
         name: {
-          type: 'string',
-          enum: ['apply fee']
+          type: 'string'
         },
         options: {
-          type: 'object',
-          required: ['type', 'value', 'on'],
-          oneOf: [{
-            properties: {
-              type: {
-                type: 'string',
-                enum: ['fixed']
-              },
-              value: {
-                type: 'integer'
-              },
-              on: ['source', 'target']
-            }
-          }, {
-            properties: {
-              type: {
-                type: 'string',
-                enum: ['percent']
-              },
-              value: {
-                type: 'number'
-              },
-              on: ['source', 'target']
-            }
-          }]
+          type: 'object'
         }
       }
+    },
+
+    OperationList: {
+      type: 'array',
+      items: { $ref: '#/definitions/Operation' }
     }
   }
 };

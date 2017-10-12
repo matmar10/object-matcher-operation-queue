@@ -9,10 +9,14 @@
   "author": "Matthew J. Martin <matthew.mar10@gmail.com>",
   "license": "UNLICENSED",
   "dependencies": {
+    "ajv": "^5.2.3",
     "bluebird": "^3.5.1",
     "common-errors": "^1.0.4",
     "js-yaml": "^3.10.0",
-    "jsonschema": "^1.2.0",
     "object-matcher": "^0.1.1"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^4.0.1"
   }
 }

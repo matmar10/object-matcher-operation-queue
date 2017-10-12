@@ -1,0 +1,26 @@
+---
+
+# deposit MYR (various ExternalAccount to fat Account)
+- criteria:
+    name:
+      $in:
+        - Matthew
+        - Salleh
+        - Syahirah
+  operations:
+    - name: say hello
+      options:
+        message:  'Hello, '
+    - name: say goodbye
+      options:
+        message:  'Goodbye, '
+
+- criteria:
+    team: front end
+    name:
+      $nin:
+        - Donald Trump
+  operation:
+    name: say nice thing
+    options:
+      message:  'I love you, '

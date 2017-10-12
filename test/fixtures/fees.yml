@@ -2,13 +2,13 @@
 
 # deposit MYR (various ExternalAccount to fat Account)
 - criteria:
-    sourceExternalAccountType: debit card
-    # sourceExternalAccountType:
-    #   $in:
-    #     - debit card
-    #     - atm deposit
-    #     - counter deposit
-    #     - back account
+    # sourceExternalAccountType: debit card
+    sourceExternalAccountType:
+      $in:
+        - debit card
+        - atm deposit
+        - counter deposit
+        - back account
     destinationAccountType: fiat
     destinationCurrency: MYR
   operations:
