@@ -67,3 +67,11 @@ As an example, this would allow the following in config:
       options:
         amount:            10
 ```
+
+## Release History
+
+### 0.1.0
+
+Initial Release
+
+
