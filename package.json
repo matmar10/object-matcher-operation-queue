@@ -1,6 +1,6 @@
 {
   "name": "object-matcher-operation-queue",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "description": "Match an object to a list of operations based on a YAML configuration, and then execute them in sequential order, passing the result to each subsequent operation.",
   "main": "src/index.js",
   "scripts": {
